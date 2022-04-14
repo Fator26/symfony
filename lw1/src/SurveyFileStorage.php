@@ -52,7 +52,7 @@ class SurveyFileStorage
 
     private function makeStringsFromFile($dataFile) : array
     {
-        $arr = fopen($dataFile);
+        $arr = file($dataFile);
         $returnedArray= [];
         foreach ($arr as $line)
         {
