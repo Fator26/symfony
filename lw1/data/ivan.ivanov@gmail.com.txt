@@ -1,4 +1,0 @@
-First name: Ivan
-Last name: Ivanov
-Email: ivan.ivanov@gmail.com
-Age: 24
