@@ -3,24 +3,24 @@ header("Content-Type: text/plain");
 
 class SurveyFileStorage
 {
-    private const END_OF_LINE = "\n";
-    private const PARAGRAF_FIRST_NAME = 'First name: ';
-    private const PARAGRAF_LAST_NAME = 'Last name: ';
-    private const PARAGRAF_EMAIL = 'Email: ';
-    private const PARAGRAF_AGE = 'Age: ';
+    private const END_OF_LINE = PHP_EOL;
+    private const PARAGRAF_FIRST_NAME = 'First name';
+    private const PARAGRAF_LAST_NAME = 'Last name';
+    private const PARAGRAF_EMAIL = 'Email';
+    private const PARAGRAF_AGE = 'Age';
+    private const SEPARATOR = ': ';
     private const DATA_DIR = 'data/';
-    private string $fullPath = "";
+    private string $fullPath;
 
     public function loadSurvey(Survey $survey) : Survey
     {
         $this->fullPath = self::DATA_DIR . $survey->getEmail() . '.txt';
-
         if (file_exists($this->fullPath))
         {
             $dataFile = fopen($this->fullPath, 'r');
             if ($dataFile)
             {
-                $userData = $this->makeStringsFromFile($dataFile);
+                $userData = $this->makeArrayFromFile($dataFile);
                 fclose($dataFile);
                 return new Survey($userData[self::PARAGRAF_FIRST_NAME], $userData[self::PARAGRAF_LAST_NAME], $userData[self::PARAGRAF_EMAIL], $userData[self::PARAGRAF_AGE]);
             }
@@ -30,37 +30,36 @@ class SurveyFileStorage
 
     public function saveSurvey(Survey $survey) : void
     {
+        $this->fullPath = self::DATA_DIR . $survey->getEmail() . '.txt';
         $email = $survey->getEmail();
         if (!is_dir(self::DATA_DIR))
         {
             mkdir(self::DATA_DIR);
         }
-        if ($email !== '') {
-            $path = self::DATA_DIR . $email . '.txt';
+        if ($email !== '')
+        {
             $prevSurvey = $this->loadSurvey($survey);
             $text = $this->makeStringToSave($survey, $prevSurvey);
-            if (file_put_contents($path, $text))
+            if (file_put_contents($this->fullPath, $text))
             {
-                echo END_OF_LINE. "Save complited sucsessful" . END_OF_LINE;
+                echo self::END_OF_LINE. "Save complited sucsessful" . self::END_OF_LINE ;
             }
             else
             {
-                echo END_OF_LINE . "Save complited sucsessful" . END_OF_LINE;
+                echo self::END_OF_LINE . "Saved ERROR!!!!" . self::END_OF_LINE;
             }
         }
     }
 
-    private function makeStringsFromFile($dataFile) : array
+    private function makeArrayFromFile($dataFile) : array
     {
-        $arr = file($dataFile);
-        $returnedArray= [];
-        foreach ($arr as $line)
+        $returnedArr = [];
+        while ($buffer = fgets($dataFile, 4096))
         {
-
-            $pair = explode(':', line);
-            $returnedArray[$pair[0]] = $pair[1];
+            $tempStr = explode(self::SEPARATOR, str_replace(self::END_OF_LINE, '', $buffer));
+            $returnedArr[$tempStr[0]] = $tempStr[1];
         }
-        return $returnedArray;
+        return $returnedArr;
     }
 
     private function makeStringToSave(Survey $survey, Survey $prevSurvey) : string
@@ -74,7 +73,7 @@ class SurveyFileStorage
         ];
         foreach (array_keys($values) as $key)
         {
-            $resString .= $key . $values[$key] . self::END_OF_LINE;
+            $resString .= $key . self::SEPARATOR . $values[$key] . self::END_OF_LINE;
         }
         return $resString;
     }
