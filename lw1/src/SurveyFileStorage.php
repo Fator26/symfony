@@ -17,13 +17,8 @@ class SurveyFileStorage
         $this->fullPath = self::DATA_DIR . $survey->getEmail() . '.txt';
         if (file_exists($this->fullPath))
         {
-            $dataFile = fopen($this->fullPath, 'r');
-            if ($dataFile)
-            {
-                $userData = $this->makeArrayFromFile($dataFile);
-                fclose($dataFile);
-                return new Survey($userData[self::PARAGRAF_FIRST_NAME], $userData[self::PARAGRAF_LAST_NAME], $userData[self::PARAGRAF_EMAIL], $userData[self::PARAGRAF_AGE]);
-            }
+            $userData = $this->makeArrayFromFile();
+            return new Survey($userData[self::PARAGRAF_FIRST_NAME], $userData[self::PARAGRAF_LAST_NAME], $userData[self::PARAGRAF_EMAIL], $userData[self::PARAGRAF_AGE]);
         }
         return new Survey();
     }
@@ -51,13 +46,14 @@ class SurveyFileStorage
         }
     }
 
-    private function makeArrayFromFile($dataFile) : array
+    private function makeArrayFromFile() : array
     {
+        $userTempArr =  explode(self::END_OF_LINE, file_get_contents($this->fullPath));
         $returnedArr = [];
-        while ($buffer = fgets($dataFile, 4096))
+        for ($i = 0; $i < sizeof($userTempArr); $i++)
         {
-            $tempStr = explode(self::SEPARATOR, str_replace(self::END_OF_LINE, '', $buffer));
-            $returnedArr[$tempStr[0]] = $tempStr[1];
+            $pair = explode(self::SEPARATOR, $userTempArr[$i]);
+            $returnedArr[$pair[0]] = $pair[1];
         }
         return $returnedArr;
     }
