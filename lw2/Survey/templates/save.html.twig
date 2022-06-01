@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Текущие значения</title>
+</head>
+<body>
+<p>{{ saveResult }}</p>
+{% if saveResult == 'Error!' %}
+    <p>Saved error</p>
+{% else %}
+    <p>Email: {{ email }}</p>
+    <p>First Name: {{ firstname }}</p>
+    <p>Last Name: {{ lastname }}</p>
+    <p>Age: {{ age }}</p>
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Значения из файла</title>
+</head>
+<body>
+{% if load.email == null %}
+    <p>File not found</p>
+{% else %}
+    <p>Email: {{ load.email }}</p>
+    <p>First Name: {{ load.firstname }}</p>
+    <p>Last Name: {{ load.lastname }}</p>
+    <p>Age: {{ load.age }}</p>
+{% endif %}
+</body>
+</html>
